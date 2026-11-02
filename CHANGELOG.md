@@ -1,5 +1,13 @@
 # 更新日志
 
+## 0.1.0-rc.3+20261102
+
+### 📚 文档与兼容性说明
+- ⚠️ **平台兼容性提示**：在 README 醒目位置增设警示说明，明确暂不支持 QQ 官方 Bot 的群聊与私聊环境，并附带针对腾讯开放平台协议与网关事件排查的 [Issue #1 详细分析](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6577660989)。
+- 🎬 **效果动图更新**：新增 Discord 平台实装效果演示动图，统一动图资源扩展名为标准 `.gif` 格式。
+
+---
+
 ## 0.1.0-rc.2+20261102
 
 ### 📚 文档与界面优化

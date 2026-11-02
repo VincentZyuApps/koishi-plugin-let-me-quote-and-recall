@@ -24,9 +24,21 @@
 
 💬 智能为指令回复添加引用 ⚡ 并在指令被撤回时联动撤回 Bot 消息 🔄
 
+> [!WARNING]
+> ### ⚠️ 平台兼容性警示
+> 本插件**暂不支持 QQ 官方 Bot（`@koishijs/plugin-adapter-qq` / `adapter-qq`）的群聊与私聊环境**（OneBot、Discord 等主流协议端均可完美支持）。
+> - **原因简析**：腾讯官方开放平台网关**完全不向 Bot 开发者推送群聊与私聊的消息撤回（Delete）事件**，且群聊消息引用强制依赖特殊的索引字段（`msg_idx`）。
+> - **深度技术排查与协议证据**：详细调研与源码行数比对请参阅 [Issue #1：QQ 官方 Bot 兼容性调研与协议分析](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6577660989)。
+
 ## 📺 效果预览
 
-![效果预览](./docs/preview/preview.gif)
+### 🤖 OneBot 效果预览
+
+![OneBot 效果预览](./docs/preview/preview.onebot.gif)
+
+### 🎮 Discord 效果预览
+
+![Discord 效果预览](./docs/preview/preview.discord.gif)
 
 ## 🌟 功能特性
 
