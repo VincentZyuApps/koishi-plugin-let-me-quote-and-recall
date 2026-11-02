@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-let-me-quote-and-recall",
   "description": "💬 智能为指令回复添加引用 ⚡ 并在指令被撤回时联动撤回 Bot 消息 🔄",
-  "version": "0.1.0-rc.1+20261102",
+  "version": "0.1.0-rc.2+20261102",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
