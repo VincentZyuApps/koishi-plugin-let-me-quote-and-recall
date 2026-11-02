@@ -2,7 +2,11 @@
 
 [![npm](https://img.shields.io/npm/v/koishi-plugin-let-me-quote-and-recall?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-let-me-quote-and-recall)
 
-智能为指令回复添加引用，并在指令被撤回时联动撤回 Bot 消息。
+💬 智能为指令回复添加引用 ⚡ 并在指令被撤回时联动撤回 Bot 消息 🔄
+
+## 📺 效果预览
+
+![效果预览](./docs/preview/preview.gif)
 
 ## 🌟 功能特性
 
