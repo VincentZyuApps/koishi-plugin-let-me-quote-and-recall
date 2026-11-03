@@ -35,10 +35,7 @@
 > | **Discord** | ✅ 支持 | ✅ 支持 | 实测完美支持！Gateway 具备原生 `MESSAGE_DELETE` 事件与消息引用 |
 > | **Telegram (官方 Bot API)** | ✅ 支持 | ❌ 不支持 | 引用回复正常；但 [Telegram 官方 Bot API](https://core.telegram.org/bots/api#update) **从不下发消息删除事件**，Bot 无法感知撤回动作 |
 > 
-> 🔗 **协议调研与源码行数证据**：
-> - [Issue #1：QQ 官方 Bot 兼容性调研与协议证据](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6577660989)
-> - [Issue #1：Telegram 官方 Bot API 撤回限制排查](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6592352559)
-> - [`satorijs/satori` Telegram 适配器 Update 定义：`adapters/telegram/src/types/index.ts#L17-L40` (`db22bb3`)](https://github.com/satorijs/satori/blob/db22bb3c22f8ee9f6d9d9ecf04fd58b70006956f/adapters/telegram/src/types/index.ts#L17-L40)
+> 🔗 **协议调研与源码行数证据**：详见 [Issue #1](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1)
 
 ## 📺 效果预览
 
