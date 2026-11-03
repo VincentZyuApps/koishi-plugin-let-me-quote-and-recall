@@ -25,10 +25,20 @@
 💬 智能为指令回复添加引用 ⚡ 并在指令被撤回时联动撤回 Bot 消息 🔄
 
 > [!WARNING]
-> ### ⚠️ 平台兼容性警示
-> 本插件**暂不支持 QQ 官方 Bot（`@koishijs/plugin-adapter-qq` / `adapter-qq`）的群聊与私聊环境**（OneBot、Discord 等主流协议端均可完美支持）。
-> - **原因简析**：腾讯官方开放平台网关**完全不向 Bot 开发者推送群聊与私聊的消息撤回（Delete）事件**，且群聊消息引用强制依赖特殊的索引字段（`msg_idx`）。
-> - **深度技术排查与协议证据**：详细调研与源码行数比对请参阅 [Issue #1：QQ 官方 Bot 兼容性调研与协议分析](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6577660989)。
+> ### ⚠️ 平台兼容性与功能支持矩阵
+> 受不同聊天软件官方开放平台接口协议设计的限制，本插件两大核心功能的支持情况如下：
+> 
+> | 协议端 / 平台 | 指令自动引用 (Quote) | 指令联动撤回 (Recall) | 限制说明与协议原因 |
+> | :--- | :---: | :---: | :--- |
+> | **OneBot (QQ 协议端)** | ✅ 支持 | ✅ 支持 | 完美支持撤回事件通知与主动引用 |
+> | **Discord** | ✅ 支持 | ✅ 支持 | Gateway 具备原生 `MESSAGE_DELETE` 事件与消息引用 |
+> | **Telegram (官方 Bot API)** | ✅ 支持 | ❌ 不支持 | 引用正常；但 [Telegram 官方 Bot API](https://core.telegram.org/bots/api#update) **从不下发消息删除事件**，Bot 无法感知撤回动作 |
+> | **QQ 官方 Bot (群聊/私聊)** | ❌ 不支持 | ❌ 不支持 | 官方网关不下发群聊删除事件，且群聊引用强制依赖特殊索引字段 |
+> 
+> 🔗 **协议调研与源码行数证据**：
+> - [Issue #1：QQ 官方 Bot 兼容性调研与协议证据](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6577660989)
+> - [Issue #1：Telegram 官方 Bot API 撤回限制排查](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6592352559)
+> - [`satorijs/satori` Telegram 适配器 Update 定义：`adapters/telegram/src/types/index.ts#L17-L40` (`db22bb3`)](https://github.com/satorijs/satori/blob/db22bb3c22f8ee9f6d9d9ecf04fd58b70006956f/adapters/telegram/src/types/index.ts#L17-L40)
 
 ## 📺 效果预览
 

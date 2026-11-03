@@ -3,7 +3,7 @@
 ## 0.1.0-rc.3+20261102
 
 ### 📚 文档与兼容性说明
-- ⚠️ **平台兼容性提示**：在 README 醒目位置增设警示说明，明确暂不支持 QQ 官方 Bot 的群聊与私聊环境，并附带针对腾讯开放平台协议与网关事件排查的 [Issue #1 详细分析](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6577660989)。
+- ⚠️ **平台兼容性矩阵**：在 README 增设全平台支持矩阵，明确指出 QQ 官方 Bot 与 Telegram 官方 Bot API 因上游协议限制无法支持联动撤回，并附带针对开放平台协议与 Satori 适配器源码行数的 [Issue #1 详细分析](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6592352559)。
 - 🎬 **效果动图更新**：新增 Discord 平台实装效果演示动图，统一动图资源扩展名为标准 `.gif` 格式。
 
 ---
