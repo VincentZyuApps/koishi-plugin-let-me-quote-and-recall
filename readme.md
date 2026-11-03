@@ -26,14 +26,14 @@
 
 > [!WARNING]
 > ### ⚠️ 平台兼容性与功能支持矩阵
-> 受不同聊天软件官方开放平台接口协议设计的限制，本插件两大核心功能的支持情况如下：
+> 本插件经**作者实机测试**在各主流平台的兼容性表现如下。受各聊天平台底层开放协议与网关事件机制的客观限制，两大核心功能的支持情况存在差异：
 > 
-> | 协议端 / 平台 | 指令自动引用 (Quote) | 指令联动撤回 (Recall) | 限制说明与协议原因 |
+> | 协议端 / 平台 | 指令自动引用 (Quote) | 指令联动撤回 (Recall) | 实测说明与协议原因 |
 > | :--- | :---: | :---: | :--- |
-> | **OneBot (QQ 协议端)** | ✅ 支持 | ✅ 支持 | 完美支持撤回事件通知与主动引用 |
-> | **Discord** | ✅ 支持 | ✅ 支持 | Gateway 具备原生 `MESSAGE_DELETE` 事件与消息引用 |
-> | **Telegram (官方 Bot API)** | ✅ 支持 | ❌ 不支持 | 引用正常；但 [Telegram 官方 Bot API](https://core.telegram.org/bots/api#update) **从不下发消息删除事件**，Bot 无法感知撤回动作 |
-> | **QQ 官方 Bot (群聊/私聊)** | ❌ 不支持 | ❌ 不支持 | 官方网关不下发群聊删除事件，且群聊引用强制依赖特殊索引字段 |
+> | **OneBot (QQ 协议端)** | ✅ 支持 | ✅ 支持 | 实测完美支持！具备完整的消息引用与群聊/私聊撤回事件通知 |
+> | **QQ 官方 Bot (群聊/私聊)** | ❌ 不支持 | ❌ 不支持 | 官方网关不下发群聊/私聊删除事件，且群聊引用强制依赖特殊索引字段 |
+> | **Discord** | ✅ 支持 | ✅ 支持 | 实测完美支持！Gateway 具备原生 `MESSAGE_DELETE` 事件与消息引用 |
+> | **Telegram (官方 Bot API)** | ✅ 支持 | ❌ 不支持 | 引用回复正常；但 [Telegram 官方 Bot API](https://core.telegram.org/bots/api#update) **从不下发消息删除事件**，Bot 无法感知撤回动作 |
 > 
 > 🔗 **协议调研与源码行数证据**：
 > - [Issue #1：QQ 官方 Bot 兼容性调研与协议证据](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1#issuecomment-6577660989)
