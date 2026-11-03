@@ -1,5 +1,21 @@
 # 更新日志
 
+## 0.1.0+20261103
+
+### 🎉 正式版发布 (v0.1.0)
+- 🚀 **全平台功能实测落地**：
+  - **指令自动引用 (Quote)**：经作者实机测试，在 OneBot、QQ 官方 Bot、Discord、Telegram 所有测试平台**均已 100% 完美支持**。
+  - **指令联动撤回 (Recall)**：在 OneBot (NapCat / LLOneBot) 与 Discord 下完美联动撤回；QQ 官方 Bot 与 Telegram 官方 Bot API 受限于上游平台不广播消息删除事件，在文档中进行了明确标注与技术原理说明。
+- 🎬 **文档与媒体资源完善**：
+  - 提供了 OneBot 与 Discord 的高清正方形操作演示动图。
+  - 提供了各平台兼容性实测截图与 [Issue #1 协议深度排查追踪](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1)。
+- 🛡️ **生产级稳定性与缓存防护**：
+  - 支持单选控制策略（`never` / `if-missing` / `always`）。
+  - 双重缓存防护（FIFO/LRU 空间容量上限 + TTL 主动过期清理），杜绝内存泄露。
+  - 支持群聊 (`group`) 与私聊 (`direct`) 场景细粒度控制及可调节撤回延迟。
+
+---
+
 ## 0.1.0-rc.3+20261102
 
 ### 📚 文档与兼容性说明
