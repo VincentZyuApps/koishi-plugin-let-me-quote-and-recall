@@ -128,7 +128,18 @@ export function apply(ctx: Context, config: Config) {
   // 4. 监听消息撤回事件 (message-deleted)
   if (config.autoRecall) {
     ctx.on('message-deleted', async (session) => {
-      const deletedMsgId = session.messageId
+      // 兼容各平台撤回消息 ID 提取：
+      // @satorijs/adapter-kook 在 deleted_message 事件中存在 Bug：
+      // 将系统通知外层的 data.msg_id 赋值给了 session.messageId，而真实被删除的消息 ID 存放在 internal.extra.body.msg_id 中。
+      const anySession = session as any
+      const kookTargetId = session.platform === 'kook'
+        ? (anySession.internal?.extra?.body?.msg_id || anySession.kook?.extra?.body?.msg_id)
+        : undefined
+
+      const deletedMsgId = kookTargetId || session.messageId
+
+      logDebug(`[message-deleted] 捕获撤回事件: platform=${session.platform}, rawId=${session.messageId}, resolvedId=${deletedMsgId}`)
+
       if (!deletedMsgId || !commandMap.has(deletedMsgId)) return
       if (!isSceneEnabled(session.isDirect)) return
 

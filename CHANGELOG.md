@@ -1,5 +1,17 @@
 # 更新日志
 
+## 0.1.1-beta.1+20261104
+
+### 🚀 平台支持与兼容增强 (KOOK)
+- 🎮 **KOOK 平台指令撤回兼容适配**：
+  - 针对 `@satorijs/adapter-kook` 将 `deleted_message` 事件外层系统通知 UUID 赋值给 `session.messageId` 导致真实被删消息 ID 丢失的 upstream 缺陷，插件侧内置向下兼容层，优先从 `session.internal.extra.body.msg_id` 提取目标消息 ID。
+  - 实测 KOOK 客户端删除指令后，Bot 能够秒级精准联动撤回回复。
+- 📚 **文档与兼容性证据**：
+  - README 平台兼容矩阵更新加入 KOOK 平台支持状态。
+  - 新增实测截图证据资源 `docs/compatibility/kook-deleted-message-issue.png`。
+
+---
+
 ## 0.1.0+20261103
 
 ### 🎉 正式版发布 (v0.1.0)
