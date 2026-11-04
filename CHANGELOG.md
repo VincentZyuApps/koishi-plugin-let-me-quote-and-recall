@@ -9,6 +9,7 @@
 - 📚 **文档与兼容性证据**：
   - README 平台兼容矩阵更新加入 KOOK 平台支持状态。
   - 新增实测截图证据资源 `docs/compatibility/kook-deleted-message-issue.png`。
+  - 新增 1:1 正方形高清效果演示动图 `docs/preview/preview.kook.gif`。
 
 ---
 

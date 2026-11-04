@@ -48,6 +48,10 @@
 
 ![Discord 效果预览](./docs/preview/preview.discord.gif)
 
+### 🎮 KOOK (开黑啦) 效果预览
+
+![KOOK 效果预览](./docs/preview/preview.kook.gif)
+
 ## 🌟 功能特性
 
 1. **指令自动引用 (Quote)**
