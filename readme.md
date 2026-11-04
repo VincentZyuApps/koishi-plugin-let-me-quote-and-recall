@@ -31,10 +31,10 @@
 > | 协议端 / 平台 | 指令自动引用 (Quote) | 指令联动撤回 (Recall) | 实测说明与协议原因 |
 > | :--- | :---: | :---: | :--- |
 > | **OneBot (QQ 协议端)** | ✅ 支持 | ✅ 支持 | 实测完美支持！具备完整的消息引用与群聊/私聊撤回事件通知 |
-> | **Discord** | ✅ 支持 | ✅ 支持 | 实测完美支持！Gateway 具备原生 `MESSAGE_DELETE` 事件与消息引用 |
-> | **KOOK (开黑啦)** | ✅ 支持 | ✅ 支持 *(内置适配)* | 自动引用原生支持；KOOK 官方网关下发 `deleted_message` 事件。针对 `@satorijs/adapter-kook` 将事件通知 UUID 误当做消息 ID 的官方适配器缺陷，本插件已内置向下兼容层，实测完美联动撤回 |
 > | **QQ 官方 Bot (群聊/私聊)** | ✅ 支持 | ❌ 不支持 | 自动引用回复实测完美支持！但腾讯开放平台网关**不下发任何消息撤回（Delete）事件**，Bot 无法感知撤回动作 |
+> | **Discord** | ✅ 支持 | ✅ 支持 | 实测完美支持！Gateway 具备原生 `MESSAGE_DELETE` 事件与消息引用 |
 > | **Telegram (官方 Bot API)** | ✅ 支持 | ❌ 不支持 | 引用回复正常；但 [Telegram 官方 Bot API](https://core.telegram.org/bots/api#update) **从不下发消息删除事件**，Bot 无法感知撤回动作 |
+> | **KOOK (开黑啦)** | ✅ 支持 | ✅ 支持 *(内置适配)* | 自动引用原生支持；KOOK 官方网关下发 `deleted_message` 事件。针对 `@satorijs/adapter-kook` 将事件通知 UUID 误当做消息 ID 的官方适配器缺陷，本插件已内置向下兼容层，实测完美联动撤回 |
 > 
 > 🔗 **协议调研与源码行数证据**：详见 [Issue #1](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1)
 
