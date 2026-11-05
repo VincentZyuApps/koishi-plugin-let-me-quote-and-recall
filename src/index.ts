@@ -45,6 +45,26 @@ export function apply(ctx: Context, config: Config) {
     if (lowerType === lowerTarget) return true
 
     // 特殊类型语义兼容与语法糖
+    if (lowerTarget === 'audio') {
+      if (lowerType === 'audio' || lowerType === 'record' || lowerType.endsWith(':audio') || lowerType.endsWith(':record') || lowerType.endsWith(':tts')) return true
+    }
+
+    if (lowerTarget === 'video') {
+      if (lowerType === 'video' || lowerType.endsWith(':video')) return true
+    }
+
+    if (lowerTarget === 'file') {
+      if (lowerType === 'file' || lowerType.endsWith(':file')) return true
+    }
+
+    if (lowerTarget === 'ark') {
+      if (lowerType === 'ark' || lowerType.endsWith(':ark') || lowerType.endsWith(':json')) return true
+    }
+
+    if (lowerTarget === 'card') {
+      if (lowerType === 'card' || lowerType.endsWith(':card') || lowerType.endsWith(':cardimage')) return true
+    }
+
     if (lowerTarget === 'forward') {
       if (lowerType === 'figure') return true
       if (lowerType === 'message' && ('forward' in element.attrs || element.attrs.forward !== undefined)) return true
