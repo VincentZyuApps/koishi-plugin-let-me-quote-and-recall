@@ -25,6 +25,13 @@ export const SCENE_MODE = {
 
 export type SceneModeType = typeof SCENE_MODE[keyof typeof SCENE_MODE]
 
+/** 🚫 出站引用排除规则定义 */
+export interface QuoteExcludeRule {
+  platform: string // 🎯 平台名称（如 onebot、qq、* 通配）
+  type: string // 🏷️ 消息元素类型（如 audio、forward、markdown、onebot:music 等）
+  comment?: string // 📝 规则说明 / 跳过原因
+}
+
 // ====================
 // 📋 配置接口类型定义
 // ====================
@@ -32,6 +39,7 @@ export type SceneModeType = typeof SCENE_MODE[keyof typeof SCENE_MODE]
 export interface Config {
   // 💬 指令引用配置
   quoteMode: QuoteModeType
+  quoteExcludeRules: QuoteExcludeRule[]
 
   // 🔄 联动撤回配置
   autoRecall: boolean
@@ -63,6 +71,27 @@ export const Config: Schema<Config> = Schema.intersect([
       .role('radio')
       .default(QUOTE_MODE.IF_MISSING)
       .description('💬 指令回复引用策略。智能识别指令触发消息（非指令出站消息不受影响）。'),
+    quoteExcludeRules: Schema.array(Schema.object({
+      platform: Schema.string().required().description('🎯 平台名称（如 onebot、qq、* 通配全部平台）'),
+      type: Schema.string().required().description('🏷️ 消息元素类型（如 audio、forward、onebot:music、markdown 等）'),
+      comment: Schema.string().description('📝 规则说明 / 跳过原因'),
+    }))
+      .role('table')
+      .default([
+        { platform: 'onebot', type: 'audio', comment: '🎙️ OneBot 语音 (PTT) 原生不支持引用，混发会导致空回复消息与 1200 错误 ❌' },
+        { platform: 'onebot', type: 'forward', comment: '📦 OneBot 合并转发消息不支持引用 🚫' },
+        { platform: 'onebot', type: 'figure', comment: '🖼️ OneBot 合并转发容器不支持引用 🚫' },
+        { platform: 'onebot', type: 'onebot:music', comment: '🎵 OneBot 音乐卡片不支持引用 ❌' },
+        { platform: 'onebot', type: 'music', comment: '🎶 通用音乐卡片不支持引用 ❌' },
+        { platform: 'onebot', type: 'onebot:json', comment: '📜 OneBot Ark JSON 卡片（如第三方音乐签名、特殊卡片等） 🚫' },
+        { platform: 'onebot', type: 'onebot:xml', comment: '📑 OneBot XML 卡片 🚫' },
+        { platform: 'qq', type: 'markdown', comment: '📝 QQ 官方平台 Markdown 消息不支持引用或混发会被拆包 ⚠️' },
+        { platform: 'qq', type: 'qq:markdown', comment: '🎨 QQ 官方平台自定义模版 Markdown 卡片 ⚠️' },
+        { platform: 'qq', type: 'qq:rawmarkdown', comment: '📋 QQ 官方平台原生 Markdown 卡片 ⚠️' },
+        { platform: 'qq', type: 'audio', comment: '🎙️ QQ 官方平台语音消息不支持引用 ❌' },
+        { platform: 'qq', type: 'forward', comment: '📦 QQ 官方平台合并转发不支持引用 🚫' },
+      ])
+      .description('🚫 引用排除黑名单规则列表。当出站消息包含匹配的元素类型时，自动跳过为其添加引用。'),
   }).description('💬 指令引用配置'),
 
   // ==================

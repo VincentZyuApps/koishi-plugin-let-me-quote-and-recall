@@ -58,6 +58,20 @@ export const usage = `
 </details>
 
 <details style="${detailsStyle}">
+<summary style="${summaryStyle}"><b style="color: #e53e3e;">🚫 出站引用排除黑名单规则 (quoteExcludeRules)</b></summary>
+<div style="${detailsBodyStyle}">
+<p><b>⚠️ 为什么需要排除规则：</b>部分聊天协议在底层设计上，特定元素不能与引用（Reply）混发：</p>
+<ul>
+  <li><b>OneBot 语音 (PTT)：</b>底层适配器会将语音与前置引用强行拆分为两条消息，导致发出一张空回复并报 <code>retcode: 1200</code> 错误。</li>
+  <li><b>合并转发 (forward / figure)：</b>转发消息是由单独的接口下发的完整卡片容器，外层不支持携带引用。</li>
+  <li><b>音乐卡片与 Ark JSON：</b>音乐卡片（<code>onebot:music</code>、<code>onebot:json</code> 等）混发引用会导致卡片解析异常或签名失效。</li>
+  <li><b>QQ 官方平台 Markdown：</b>官方 QQ Markdown/按钮卡片在携带 <code>message_reference</code> 引用时容易被拒绝或拆包。</li>
+</ul>
+<p><b>💡 规则智能匹配：</b>当出站消息中包含黑名单内指定平台的指定元素类型时，插件会自动跳过为其添加引用。<b>注意：跳过引用完全不影响联动撤回功能，依然支持指令撤回时联动撤回！</b></p>
+</div>
+</details>
+
+<details style="${detailsStyle}">
 <summary style="${summaryStyle}"><b style="color: #0ea5e9;">🔄 联动撤回机制与延迟说明</b></summary>
 <div style="${detailsBodyStyle}">
 <p><b>⛓️ 消息级溯源绑定：</b>通过对底层 <code>bot.sendMessage</code> 进行非侵入式包装，安全收集 Bot 对某条指令作出的所有回复消息 ID（支持捕获同一指令执行中分批发送的多条消息）。</p>

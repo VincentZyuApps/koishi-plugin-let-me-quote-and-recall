@@ -80,6 +80,7 @@
 | 配置项 | 类型 | 默认值 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `quoteMode` | `'never' \| 'if-missing' \| 'always'` | `'if-missing'` | 指令回复引用策略 (A/B/C 三档单选) |
+| `quoteExcludeRules` | `{ platform, type, comment }[]` | 包含 OneBot 语音/转发/音乐及 QQ Markdown 等 | 出站引用排除黑名单规则（匹配的元素跳过添加引用） |
 | `autoRecall` | `boolean` | `true` | 是否在指令被撤回时联动撤回回复 |
 | `recallDelay` | `number` | `0` | 联动撤回延迟时间（毫秒，0 为即时） |
 | `maxEntries` | `number` | `1000` | 内存中最多保留的指令映射数量（条，防刷屏熔断保护） |

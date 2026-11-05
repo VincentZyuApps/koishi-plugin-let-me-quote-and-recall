@@ -1,11 +1,11 @@
 import { Context, h, Bot } from 'koishi'
-import { Config, QUOTE_MODE, SCENE_MODE, type QuoteModeType, type SceneModeType } from './config'
+import { Config, QUOTE_MODE, SCENE_MODE, type QuoteModeType, type SceneModeType, type QuoteExcludeRule } from './config'
 import { usage } from './usage'
 
 export const name = 'let-me-quote-and-recall'
 
 export { Config, usage, QUOTE_MODE, SCENE_MODE }
-export type { QuoteModeType, SceneModeType }
+export type { QuoteModeType, SceneModeType, QuoteExcludeRule }
 
 interface CommandRecord {
   channelId: string
@@ -38,6 +38,53 @@ export function apply(ctx: Context, config: Config) {
     return Array.isArray(config.enabledScenes) && config.enabledScenes.includes(scene)
   }
 
+  function matchElementType(element: h, targetType: string): boolean {
+    const lowerTarget = targetType.trim().toLowerCase()
+    const lowerType = String(element.type || '').trim().toLowerCase()
+
+    if (lowerType === lowerTarget) return true
+
+    // 特殊类型语义兼容与语法糖
+    if (lowerTarget === 'forward') {
+      if (lowerType === 'figure') return true
+      if (lowerType === 'message' && ('forward' in element.attrs || element.attrs.forward !== undefined)) return true
+      if (lowerType.endsWith(':forward')) return true
+    }
+
+    if (lowerTarget === 'markdown') {
+      if (lowerType === 'markdown' || lowerType.includes('markdown')) return true
+    }
+
+    return false
+  }
+
+  function hasMatchingElement(elements: h[], targetType: string): boolean {
+    if (!Array.isArray(elements)) return false
+    for (const el of elements) {
+      if (matchElementType(el, targetType)) return true
+      if (Array.isArray(el.children) && el.children.length > 0) {
+        if (hasMatchingElement(el.children, targetType)) return true
+      }
+    }
+    return false
+  }
+
+  function findMatchingExcludeRule(session: { platform?: string, elements?: h[] }, rules?: QuoteExcludeRule[]): QuoteExcludeRule | undefined {
+    if (!Array.isArray(rules) || !rules.length || !Array.isArray(session.elements)) return undefined
+    const currentPlatform = String(session.platform || '').trim().toLowerCase()
+
+    for (const rule of rules) {
+      if (!rule?.type) continue
+      const rulePlatform = String(rule.platform || '').trim().toLowerCase()
+      if (rulePlatform !== '*' && rulePlatform !== currentPlatform) continue
+
+      if (hasMatchingElement(session.elements, rule.type)) {
+        return rule
+      }
+    }
+    return undefined
+  }
+
   // 1. 监听指令执行前生命周期
   ctx.on('command/before-execute', ({ session }) => {
     if (!session?.messageId) return
@@ -55,14 +102,14 @@ export function apply(ctx: Context, config: Config) {
           const oldRecord = commandMap.get(oldestKey)
           clearTimeout(oldRecord?.timer)
           commandMap.delete(oldestKey)
-          logDebug(`[Cache] 达到最大缓存条目 (${config.maxEntries})，淘汰最旧记录: ${oldestKey}`)
+          logDebug(`📦 [Cache] 达到最大缓存条目容量 (${config.maxEntries})，淘汰最旧记录 🚪: ${oldestKey}`)
         }
       }
 
       // 时间维度保障：到期自动清理
       const timer = setTimeout(() => {
         commandMap.delete(userMsgId)
-        logDebug(`[Cache] 指令记录超时过期已清理: ${userMsgId}`)
+        logDebug(`⏰ [Cache] 指令记录超时过期已自动清理 🧹: ${userMsgId}`)
       }, config.expireTime * 1000)
 
       commandMap.set(userMsgId, {
@@ -71,7 +118,7 @@ export function apply(ctx: Context, config: Config) {
         botMsgIds: [],
         timer,
       })
-      logDebug(`[Track] 记录指令触发消息 ID: ${userMsgId} (频道: ${session.channelId}, 当前缓存: ${commandMap.size}/${config.maxEntries})`)
+      logDebug(`🎯 [Track] 记录指令触发消息 ID 📌: ${userMsgId} (频道: ${session.channelId}, 当前缓存: ${commandMap.size}/${config.maxEntries} 📊)`)
     }
   })
 
@@ -86,19 +133,26 @@ export function apply(ctx: Context, config: Config) {
       return
     }
 
+    // 检查是否命中出站引用排除黑名单规则（如 OneBot 语音/转发/音乐卡片、QQ Markdown 卡片等）
+    const matchedRule = findMatchingExcludeRule(session, config.quoteExcludeRules)
+    if (matchedRule) {
+      logDebug(`🚫 [before-send] 出站消息命中 quote 排除黑名单规则 [${matchedRule.platform}:${matchedRule.type}${matchedRule.comment ? ` - ${matchedRule.comment}` : ''}] 🛡️，跳过添加引用 (元素: [${session.elements.map(e => e.type).join(', ')}])`)
+      return
+    }
+
     const hasQuote = session.elements.some(el => el.type === 'quote')
-    logDebug(`[before-send] 触发消息: ${triggerMsgId}, 当前已有 quote: ${hasQuote}, 模式: ${config.quoteMode}`)
+    logDebug(`💬 [before-send] 触发消息 📌: ${triggerMsgId}, 当前已有 quote: ${hasQuote ? '🟢 是' : '🔴 否'}, 模式: ${config.quoteMode} ⚙️`)
 
     if (config.quoteMode === 'if-missing') {
       if (!hasQuote) {
         session.elements.unshift(h('quote', { id: triggerMsgId }))
-        logDebug(`[before-send] 已前置补充 quote 元素 (id: ${triggerMsgId})`)
+        logDebug(`✨ [before-send] 已前置补充 quote 元素 (id: ${triggerMsgId}) 🔗`)
       }
     } else if (config.quoteMode === 'always') {
       // 过滤旧 quote 并将触发指令的 quote 强制置顶
       const nonQuotes = session.elements.filter(el => el.type !== 'quote')
       session.elements = [h('quote', { id: triggerMsgId }), ...nonQuotes]
-      logDebug(`[before-send] 已强制设置唯一 quote 元素 (id: ${triggerMsgId})`)
+      logDebug(`📌 [before-send] 已强制设置唯一 quote 元素 (id: ${triggerMsgId}) 🔝`)
     }
   })
 
@@ -112,7 +166,7 @@ export function apply(ctx: Context, config: Config) {
       if (triggerMsgId && commandMap.has(triggerMsgId) && Array.isArray(sentIds) && sentIds.length) {
         const record = commandMap.get(triggerMsgId)!
         record.botMsgIds.push(...sentIds)
-        logDebug(`[Track] 关联 Bot 回复消息 ID: [${sentIds.join(', ')}] -> 指令消息: ${triggerMsgId}`)
+        logDebug(`🔗 [Track] 关联 Bot 回复消息 ID 📤: [${sentIds.join(', ')}] -> 指令消息 📥: ${triggerMsgId}`)
       }
 
       return sentIds
@@ -139,7 +193,7 @@ export function apply(ctx: Context, config: Config) {
       clearTimeout(record.timer)
       commandMap.delete(deletedMsgId)
 
-      logDebug(`[Recall] 收到指令撤回事件: ${deletedMsgId}, 准备联动撤回 Bot 消息: [${record.botMsgIds.join(', ')}]`)
+      logDebug(`🗑️ [Recall] 收到指令撤回事件 ⚡: ${deletedMsgId}, 准备联动撤回 Bot 回复消息 🔄: [${record.botMsgIds.join(', ')}]`)
 
       if (config.recallDelay > 0) {
         await new Promise(resolve => setTimeout(resolve, config.recallDelay))
@@ -148,7 +202,7 @@ export function apply(ctx: Context, config: Config) {
       const targetChannelId = record.channelId || channelId
       for (const botMsgId of record.botMsgIds) {
         await bot.deleteMessage(targetChannelId, botMsgId).catch((err) => {
-          logDebug(`[Recall] 撤回 Bot 消息 ${botMsgId} 失败:`, err?.message || err)
+          logDebug(`⚠️ [Recall] 撤回 Bot 消息 ${botMsgId} 失败 ❌:`, err?.message || err)
         })
       }
     }
@@ -165,7 +219,7 @@ export function apply(ctx: Context, config: Config) {
 
       const deletedMsgId = kookTargetId || session.messageId
 
-      logDebug(`[message-deleted] 捕获撤回事件: platform=${session.platform}, rawId=${session.messageId}, resolvedId=${deletedMsgId}`)
+      logDebug(`📨 [message-deleted] 捕获撤回事件 ⚡: platform=${session.platform}, rawId=${session.messageId}, resolvedId=${deletedMsgId} 🎯`)
 
       await handleRecall(session.bot, deletedMsgId, session.channelId, session.isDirect)
     })
@@ -186,7 +240,7 @@ export function apply(ctx: Context, config: Config) {
         const chatType = raw?.event?.chat_type
         const isDirect = chatType ? chatType === 'p2p' : undefined
 
-        logDebug(`[Lark-Compat] 捕获飞书原生撤回事件: msgId=${recalledMsgId}, chatId=${chatId}, chatType=${chatType}`)
+        logDebug(`🐦 [Lark-Compat] 捕获飞书原生撤回事件 ⚡: msgId=${recalledMsgId}, chatId=${chatId}, chatType=${chatType} 🔍`)
         if (recalledMsgId) {
           await handleRecall(session.bot, recalledMsgId, chatId, isDirect)
         }
