@@ -43,19 +43,19 @@
 
 ### 🤖 OneBot 效果预览
 
-![OneBot 效果预览](./docs/preview/preview.onebot.gif)
+![OneBot 效果预览](https://cdn.jsdelivr.net/gh/VincentZyuApps/koishi-plugin-let-me-quote-and-recall@main/docs/preview/preview.onebot.gif)
 
 ### 👾 Discord 效果预览
 
-![Discord 效果预览](./docs/preview/preview.discord.gif)
+![Discord 效果预览](https://cdn.jsdelivr.net/gh/VincentZyuApps/koishi-plugin-let-me-quote-and-recall@main/docs/preview/preview.discord.gif)
 
 ### 🎮 KOOK (开黑啦) 效果预览
 
-![KOOK 效果预览](./docs/preview/preview.kook.gif)
+![KOOK 效果预览](https://cdn.jsdelivr.net/gh/VincentZyuApps/koishi-plugin-let-me-quote-and-recall@main/docs/preview/preview.kook.gif)
 
 ### 🐦 Lark (飞书) 效果预览
 
-![Lark 效果预览](./docs/preview/preview.lark.gif)
+![Lark 效果预览](https://cdn.jsdelivr.net/gh/VincentZyuApps/koishi-plugin-let-me-quote-and-recall@main/docs/preview/preview.lark.gif)
 
 ## 🌟 功能特性
 
