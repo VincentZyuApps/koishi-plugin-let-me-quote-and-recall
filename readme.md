@@ -35,7 +35,7 @@
 > | **Discord** | ✅ 支持 | ✅ 支持 | 实测完美支持！Gateway 具备原生 `MESSAGE_DELETE` 事件与消息引用 |
 > | **Telegram (官方 Bot API)** | ✅ 支持 | ❌ 不支持 | 引用回复正常；但 [Telegram 官方 Bot API](https://core.telegram.org/bots/api#update) **从不下发消息删除事件**，Bot 无法感知撤回动作 |
 > | **KOOK (开黑啦)** | ✅ 支持 | ✅ 支持 *(本插件内置兼容)* | 自动引用原生支持；KOOK 官方网关下发 `deleted_message` 事件。针对 `@satorijs/adapter-kook` 将事件通知 UUID 误当做消息 ID 的官方适配器缺陷，本插件已内置向下兼容层，实测完美联动撤回 |
-| **Lark (飞书)** | ✅ 支持 | ✅ 支持 *(本插件内置兼容)* | 自动引用原生支持；飞书开放平台网关下发 `im.message.recalled_v1` 事件。针对 `@satorijs/adapter-lark` 未将其解析为标准 `message-deleted` 事件的现状，本插件已内置事件总线向下兼容层，实测完美联动撤回 |
+> | **Lark (飞书)** | ✅ 支持 | ✅ 支持 *(本插件内置兼容)* | 自动引用原生支持；飞书开放平台网关下发 `im.message.recalled_v1` 事件。针对 `@satorijs/adapter-lark` 未将其解析为标准 `message-deleted` 事件的现状，本插件已内置事件总线向下兼容层，实测完美联动撤回。<br>⚠️ **前置配置**：飞书使用需前往开发者后台配置权限及事件下发列表并发布版本，详细参考 [Satori PR #447 配置指引](https://github.com/satorijs/satori/pull/447#issuecomment-6647345418) |
 > 
 > 🔗 **协议调研与源码行数证据**：详见 [Issue #1](https://github.com/VincentZyuApps/koishi-plugin-let-me-quote-and-recall/issues/1)
 
@@ -52,6 +52,10 @@
 ### 🎮 KOOK (开黑啦) 效果预览
 
 ![KOOK 效果预览](./docs/preview/preview.kook.gif)
+
+### 🐦 Lark (飞书) 效果预览
+
+![Lark 效果预览](./docs/preview/preview.lark.gif)
 
 ## 🌟 功能特性
 
