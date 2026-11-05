@@ -9,6 +9,7 @@ export type { QuoteModeType, SceneModeType }
 
 interface CommandRecord {
   channelId: string
+  isDirect?: boolean
   botMsgIds: string[]
   timer: NodeJS.Timeout
 }
@@ -66,6 +67,7 @@ export function apply(ctx: Context, config: Config) {
 
       commandMap.set(userMsgId, {
         channelId: session.channelId,
+        isDirect: session.isDirect,
         botMsgIds: [],
         timer,
       })
@@ -127,6 +129,31 @@ export function apply(ctx: Context, config: Config) {
 
   // 4. 监听消息撤回事件 (message-deleted)
   if (config.autoRecall) {
+    async function handleRecall(bot: Bot, deletedMsgId: string, channelId?: string, isDirect?: boolean) {
+      if (!deletedMsgId || !commandMap.has(deletedMsgId)) return
+
+      const record = commandMap.get(deletedMsgId)!
+      const resolvedDirect = isDirect ?? record.isDirect ?? false
+      if (!isSceneEnabled(resolvedDirect)) return
+
+      clearTimeout(record.timer)
+      commandMap.delete(deletedMsgId)
+
+      logDebug(`[Recall] 收到指令撤回事件: ${deletedMsgId}, 准备联动撤回 Bot 消息: [${record.botMsgIds.join(', ')}]`)
+
+      if (config.recallDelay > 0) {
+        await new Promise(resolve => setTimeout(resolve, config.recallDelay))
+      }
+
+      const targetChannelId = record.channelId || channelId
+      for (const botMsgId of record.botMsgIds) {
+        await bot.deleteMessage(targetChannelId, botMsgId).catch((err) => {
+          logDebug(`[Recall] 撤回 Bot 消息 ${botMsgId} 失败:`, err?.message || err)
+        })
+      }
+    }
+
+    // 标准 Satori message-deleted 事件监听
     ctx.on('message-deleted', async (session) => {
       // 兼容各平台撤回消息 ID 提取：
       // @satorijs/adapter-kook 在 deleted_message 事件中存在 Bug：
@@ -140,23 +167,29 @@ export function apply(ctx: Context, config: Config) {
 
       logDebug(`[message-deleted] 捕获撤回事件: platform=${session.platform}, rawId=${session.messageId}, resolvedId=${deletedMsgId}`)
 
-      if (!deletedMsgId || !commandMap.has(deletedMsgId)) return
-      if (!isSceneEnabled(session.isDirect)) return
+      await handleRecall(session.bot, deletedMsgId, session.channelId, session.isDirect)
+    })
 
-      const record = commandMap.get(deletedMsgId)!
-      clearTimeout(record.timer)
-      commandMap.delete(deletedMsgId)
+    // Lark (飞书) 官方适配器向下兼容：
+    // 在旧版或未修复的 @satorijs/adapter-lark 中，im.message.recalled_v1 事件未被转换为 message-deleted，
+    // 但 Satori 核心 dispatch 时会派发 internal/session 并携带包含原始 payload 的 session。
+    ctx.on('internal/session', async (session) => {
+      if (session.platform !== 'lark') return
 
-      logDebug(`[Recall] 收到指令撤回事件: ${deletedMsgId}, 准备联动撤回 Bot 消息: [${record.botMsgIds.join(', ')}]`)
+      const anySession = session as any
+      const raw = anySession.event?._data || anySession.lark || anySession.internal
+      const eventType = raw?.header?.event_type || raw?.type || session.event?.referrer?.type
 
-      if (config.recallDelay > 0) {
-        await new Promise(resolve => setTimeout(resolve, config.recallDelay))
-      }
+      if (eventType === 'im.message.recalled_v1') {
+        const recalledMsgId = raw?.event?.message_id
+        const chatId = raw?.event?.chat_id
+        const chatType = raw?.event?.chat_type
+        const isDirect = chatType ? chatType === 'p2p' : undefined
 
-      for (const botMsgId of record.botMsgIds) {
-        await session.bot.deleteMessage(record.channelId || session.channelId, botMsgId).catch((err) => {
-          logDebug(`[Recall] 撤回 Bot 消息 ${botMsgId} 失败:`, err?.message || err)
-        })
+        logDebug(`[Lark-Compat] 捕获飞书原生撤回事件: msgId=${recalledMsgId}, chatId=${chatId}, chatType=${chatType}`)
+        if (recalledMsgId) {
+          await handleRecall(session.bot, recalledMsgId, chatId, isDirect)
+        }
       }
     })
   }
