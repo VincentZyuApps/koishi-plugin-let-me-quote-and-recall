@@ -45,7 +45,7 @@
 
 ![OneBot 效果预览](./docs/preview/preview.onebot.gif)
 
-### 🎮 Discord 效果预览
+### 👾 Discord 效果预览
 
 ![Discord 效果预览](./docs/preview/preview.discord.gif)
 
